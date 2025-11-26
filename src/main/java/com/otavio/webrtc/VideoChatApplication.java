@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class VideoChatApplication {
 
     public static void main(String[] args) {
+        // Sobe a aplicação Spring Boot que expõe o endpoint de sinalização WebSocket.
         SpringApplication.run(VideoChatApplication.class, args);
     }
 }

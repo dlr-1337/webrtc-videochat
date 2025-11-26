@@ -25,6 +25,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        // Mapeia o handler de sinalização em /signal, aceitando origens diversas para fins didáticos.
         registry.addHandler(signalingHandler, "/signal").setAllowedOrigins("*");
     }
 }

@@ -25,6 +25,7 @@ public class Participant {
     }
 
     public boolean isSameSession(WebSocketSession other) {
+        // Usa o ID do WebSocket para identificar se trata do mesmo cliente conectado.
         return this.session.getId().equals(other.getId());
     }
 }

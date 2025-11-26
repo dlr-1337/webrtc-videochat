@@ -17,6 +17,7 @@ public class SignalMessage {
     private JsonNode payload;
 
     public SignalMessage() {
+        // Necessário para desserialização automática do Jackson.
     }
 
     public SignalMessage(String type, String roomId, String sender, String target, JsonNode payload) {

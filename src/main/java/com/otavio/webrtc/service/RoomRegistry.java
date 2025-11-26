@@ -16,6 +16,7 @@ public class RoomRegistry {
     private final Map<String, Room> rooms = new ConcurrentHashMap<>();
 
     public Room getOrCreate(String roomId) {
+        // Cria de forma thread-safe ou retorna cache existente (um registro por sala).
         return rooms.computeIfAbsent(roomId, Room::new);
     }
 
@@ -25,6 +26,7 @@ public class RoomRegistry {
 
     public void removeIfEmpty(String roomId) {
         find(roomId).ifPresent(room -> {
+            // Libera memória quando não há mais participantes na sala.
             if (room.isEmpty()) {
                 rooms.remove(roomId);
             }

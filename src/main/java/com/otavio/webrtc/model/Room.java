@@ -23,6 +23,7 @@ public class Room {
     }
 
     public void addParticipant(Participant participant) {
+        // Evita duplicar a mesma sessão caso o navegador tente reconectar.
         boolean alreadyPresent = participants.stream()
                 .anyMatch(p -> p.isSameSession(participant.getSession()));
         if (!alreadyPresent) {
@@ -31,6 +32,7 @@ public class Room {
     }
 
     public void removeParticipant(WebSocketSession session) {
+        // Remove pelo ID da sessão, não apenas por objeto, garantindo idempotência.
         participants.removeIf(p -> p.isSameSession(session));
     }
 
@@ -39,6 +41,7 @@ public class Room {
     }
 
     public Participant firstParticipant() {
+        // Convenção simples: o primeiro a entrar inicia a chamada (offer).
         return participants.isEmpty() ? null : participants.get(0);
     }
 

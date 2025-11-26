@@ -2,6 +2,7 @@
 // - Obtém mídia local, cria RTCPeerConnection e envia sinais via servidor.
 // - Apenas mensagens de sinalização (SDP/ICE) passam pelo servidor Java; áudio/vídeo fluem direto entre navegadores.
 
+// Referências aos elementos de UI
 const roomInput = document.getElementById('room');
 const joinBtn = document.getElementById('joinBtn');
 const statusEl = document.getElementById('status');
@@ -18,6 +19,7 @@ let peerConnection = null;
 let localStream = null;
 let isInitiator = false;
 
+// Clique no botão "Entrar na sala" inicia todo o fluxo.
 joinBtn.addEventListener('click', () => joinRoom());
 
 async function joinRoom() {
@@ -27,6 +29,7 @@ async function joinRoom() {
         return;
     }
 
+    // Na UX, bloqueamos botão para evitar cliques múltiplos até estabilizar.
     joinBtn.disabled = true;
     try {
         await startLocalMedia();
@@ -57,6 +60,7 @@ async function startLocalMedia() {
 }
 
 function createPeerConnection() {
+    // Cria o PeerConnection com um STUN público para descobrir endereços/portas acessíveis.
     peerConnection = new RTCPeerConnection({
         iceServers: [
             {urls: 'stun:stun.l.google.com:19302'}
@@ -76,6 +80,7 @@ function createPeerConnection() {
     };
 
     peerConnection.onconnectionstatechange = () => {
+        // Mostra estados como "connected", "failed" ou "disconnected".
         setStatus('Conexão WebRTC: ' + peerConnection.connectionState);
     };
 
@@ -85,6 +90,7 @@ function createPeerConnection() {
 
 function connectWebSocket() {
     const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    // Conecta ao servidor de sinalização Java (WebSocket).
     websocket = new WebSocket(`${wsProtocol}://${window.location.host}/signal`);
 
     websocket.onopen = () => {
@@ -105,6 +111,7 @@ function connectWebSocket() {
                 isInitiator = Boolean(message.payload?.initiator);
                 setStatus(isInitiator ? 'Você fará o offer (caller).' : 'Aguardando offer do peer.');
                 if (isInitiator) {
+                    // Apenas o iniciador cria offer, o outro apenas responde.
                     await createAndSendOffer();
                 }
                 break;
@@ -139,6 +146,7 @@ function connectWebSocket() {
 }
 
 async function createAndSendOffer() {
+    // Offer inclui descrição SDP com codecs e endereços possíveis.
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
     sendSignal('sdp', offer);
@@ -151,6 +159,7 @@ async function handleRemoteDescription(desc) {
     const remoteDesc = new RTCSessionDescription(desc);
 
     if (remoteDesc.type === 'offer') {
+        // Recebemos offer: aplicamos, criamos answer e devolvemos via sinalização.
         await peerConnection.setRemoteDescription(remoteDesc);
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
@@ -165,6 +174,7 @@ function sendSignal(type, payload = null) {
     if (!websocket || websocket.readyState !== WebSocket.OPEN) {
         return;
     }
+    // Mensagens de sinalização são leves; apenas metadados para coordenar peers.
     const message = {
         type,
         roomId,
@@ -175,6 +185,7 @@ function sendSignal(type, payload = null) {
 }
 
 function resetRemoteStream() {
+    // Encerra tracks do peer remoto para liberar recursos (ex: ao sair da sala).
     if (remoteVideo.srcObject) {
         remoteVideo.srcObject.getTracks().forEach(track => track.stop());
     }
