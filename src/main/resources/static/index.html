@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Chat - Cliente-Servidor com WebRTC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="hero">
+    <!-- Camada CLIENTE: UI roda no navegador; fala com o servidor apenas para sinalização -->
+    <div>
+        <p class="eyebrow">Arquitetura Cliente-Servidor com WebRTC</p>
+        <h1>Video Chat didático</h1>
+        <p class="subtitle">Servidor Java para sinalização, mídia peer-to-peer via WebRTC.</p>
+    </div>
+</header>
+
+<main class="content">
+    <section class="card">
+        <h2>Entre em uma sala</h2>
+        <div class="form-row">
+            <label for="room">Room ID</label>
+            <input id="room" type="text" placeholder="ex: arquitetura-101">
+        </div>
+        <button id="joinBtn" class="primary">Entrar na sala</button>
+        <p class="hint">Abra esta mesma página em duas abas diferentes, coloque o mesmo Room ID e teste.</p>
+        <p id="status" class="status">Pronto para conectar.</p>
+    </section>
+
+    <section class="grid">
+        <div class="video-box">
+            <div class="label">Minha câmera (local)</div>
+            <video id="localVideo" autoplay muted playsinline></video>
+        </div>
+        <div class="video-box">
+            <div class="label">Remoto</div>
+            <video id="remoteVideo" autoplay playsinline></video>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <!-- Este rodapé reforça o papel do servidor de sinalização -->
+    <p>Servidor Java coordena a sala e repassa SDP/ICE; browsers trocam mídia diretamente.</p>
+</footer>
+
+<script src="js/webrtc.js"></script>
+</body>
+</html>
